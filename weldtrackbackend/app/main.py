@@ -77,6 +77,7 @@ app.include_router(router)
 
 @app.get("/")
 def read_root():
+    """Return a minimal greeting payload."""
     return {"message": "hi"}
 
 
