@@ -75,6 +75,11 @@ app.add_middleware(
 app.include_router(router)
 
 
+@app.get("/")
+def read_root():
+    return {"message": "hi"}
+
+
 if __name__ == "__main__":
     import uvicorn
 
