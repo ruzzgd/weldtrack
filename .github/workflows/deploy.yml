@@ -18,7 +18,7 @@ jobs:
           script: |
             cd /var/www/weldtrack
             git reset --hard HEAD
-            git clean -fd
-            git pull
+            git clean -fd weldtrackfrontend/dist
+            git pull https://ruzzgd:${{ secrets.GH_TOKEN }}@github.com/ruzzgd/weldtrack.git
             sudo docker-compose down
             sudo docker-compose up -d --build
