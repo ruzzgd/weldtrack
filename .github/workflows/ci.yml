@@ -54,8 +54,8 @@ jobs:
       - name: Build and push Backend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./weldtrackbackend
+          file: ./weldtrackbackend/Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/weldtrack/backend:latest
           cache-from: type=gha
