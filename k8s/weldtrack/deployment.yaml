@@ -19,6 +19,9 @@ spec:
         app: backend
 
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
       containers:
         - name: backend
           image: ghcr.io/ruzzgd/weldtrack/backend:latest
@@ -82,6 +85,9 @@ spec:
         app: frontend
 
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
       containers:
         - name: frontend
           image: ghcr.io/ruzzgd/weldtrack/frontend:latest
