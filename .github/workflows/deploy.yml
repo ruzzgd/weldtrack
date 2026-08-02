@@ -1,19 +1,169 @@
-name: Deploy Pipeline
+```yaml
+name: Deploy WeldTrack
 
 on:
   workflow_call:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+
     steps:
-      - name: Deploy on VPS via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /var/www/weldtrack
-            sudo docker compose pull
-            sudo docker compose up -d
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Unlock git-crypt
+        run: |
+          set -e
+
+          echo "${{ secrets.GIT_CRYPT_KEY }}" \
+            | base64 -d > /tmp/weldtrack-git-crypt-key
+
+          git-crypt unlock /tmp/weldtrack-git-crypt-key
+
+      - name: Apply Kubernetes manifests
+        run: |
+          set -e
+
+          echo "Creating namespace..."
+          kubectl apply -f k8s/weldtrack/namespace.yaml
+
+          echo "Applying secrets and configuration..."
+          kubectl apply -f k8s/weldtrack/secret.yaml
+          kubectl apply -f k8s/weldtrack/configmap.yaml
+
+          echo "Applying persistent storage..."
+          kubectl apply -f k8s/weldtrack/pvc.yaml
+
+          echo "Applying services..."
+          kubectl apply -f k8s/weldtrack/svc.yaml
+
+          echo "Applying PostgreSQL StatefulSet..."
+          kubectl apply -f k8s/weldtrack/statefulset.yaml
+
+          echo "Waiting for PostgreSQL StatefulSet..."
+          kubectl rollout status statefulset/postgres \
+            -n weldtrack \
+            --timeout=180s
+
+          echo "Waiting for PostgreSQL pod readiness..."
+          kubectl wait \
+            --for=condition=ready \
+            pod \
+            -l app=postgres \
+            -n weldtrack \
+            --timeout=180s
+
+          echo "Applying application deployments..."
+          kubectl apply -f k8s/weldtrack/deployment.yaml
+
+          echo "Applying ingress..."
+          kubectl apply -f k8s/weldtrack/ingress.yaml
+
+      - name: Restart application deployments
+        run: |
+          set -e
+
+          kubectl rollout restart deployment/backend \
+            -n weldtrack
+
+          kubectl rollout restart deployment/frontend \
+            -n weldtrack
+
+      - name: Wait for backend rollout
+        run: |
+          set -e
+
+          if ! kubectl rollout status deployment/backend \
+            -n weldtrack \
+            --timeout=180s; then
+
+            echo "Backend rollout failed."
+
+            kubectl get pods \
+              -n weldtrack \
+              -l app=backend
+
+            kubectl describe pods \
+              -n weldtrack \
+              -l app=backend
+
+            kubectl logs \
+              -n weldtrack \
+              deployment/backend \
+              --tail=100
+
+            exit 1
+          fi
+
+      - name: Run database migrations
+        run: |
+          set -e
+
+          kubectl exec \
+            -n weldtrack \
+            deployment/backend \
+            -- alembic upgrade head
+
+      - name: Create initial administrator
+        run: |
+          set -e
+
+          kubectl exec \
+            -n weldtrack \
+            deployment/backend \
+            -- python -m app.bootstrap.create_initial_admin
+
+      - name: Wait for frontend rollout
+        run: |
+          set -e
+
+          if ! kubectl rollout status deployment/frontend \
+            -n weldtrack \
+            --timeout=180s; then
+
+            echo "Frontend rollout failed."
+
+            kubectl get pods \
+              -n weldtrack \
+              -l app=frontend
+
+            kubectl describe pods \
+              -n weldtrack \
+              -l app=frontend
+
+            kubectl logs \
+              -n weldtrack \
+              deployment/frontend \
+              --tail=100
+
+            exit 1
+          fi
+
+      - name: Show deployed resources
+        if: always()
+        run: |
+          echo "Pods:"
+          kubectl get pods -n weldtrack
+
+          echo "Services:"
+          kubectl get services -n weldtrack
+
+          echo "Ingress:"
+          kubectl get ingress -n weldtrack
+
+          echo "Persistent volume claims:"
+          kubectl get pvc -n weldtrack
+
+      - name: Clean up unused images
+        if: always()
+        run: |
+          sudo crictl rmi --prune \
+            || docker image prune -f \
+            || true
+
+      - name: Remove git-crypt key
+        if: always()
+        run: |
+          rm -f /tmp/weldtrack-git-crypt-key
+```
