@@ -3,14 +3,41 @@ kind: Service
 metadata:
   name: postgres
   namespace: weldtrack
-
 spec:
   selector:
     app: postgres
-
   ports:
     - name: postgres
       port: 5432
       targetPort: 5432
+  type: ClusterIP
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: weldtrack
+spec:
+  selector:
+    app: backend
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: weldtrack
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
   type: ClusterIP
