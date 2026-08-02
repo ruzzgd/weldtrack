@@ -1,4 +1,3 @@
-```yaml
 name: Deploy WeldTrack
 
 on:
@@ -166,4 +165,3 @@ jobs:
         if: always()
         run: |
           rm -f /tmp/weldtrack-git-crypt-key
-```
