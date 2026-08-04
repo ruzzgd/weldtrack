@@ -36,7 +36,7 @@ jobs:
           push: true
 
           build-args: |
-            VITE_API_BASE_URL=https://weldtrack.ruzzgd.dev/api
+            VITE_API_BASE_URL=/api
 
           tags: |
             ghcr.io/${{ github.repository_owner }}/weldtrack/frontend:latest
