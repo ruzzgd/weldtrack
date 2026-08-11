@@ -13,7 +13,7 @@ data:
   AUTH_COOKIE_SECURE: "true"
   AUTH_COOKIE_SAMESITE: "lax"
 
-  RESEND_FROM_EMAIL: "noreply@ruzzgd.tech"
+  RESEND_FROM_EMAIL: "noreply@ruzzgd.dev"
 
   CORS_ORIGINS: "https://weldtrack.ruzzgd.dev"
 
