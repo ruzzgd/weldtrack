@@ -16,6 +16,24 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: minio
+  namespace: weldtrack
+spec:
+  selector:
+    app: minio
+  ports:
+    - name: api
+      port: 9000
+      targetPort: api
+    - name: console
+      port: 9001
+      targetPort: console
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: backend
   namespace: weldtrack
 spec:
