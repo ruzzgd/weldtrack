@@ -45,11 +45,11 @@ spec:
 
   tls:
     - hosts:
-        - api.weldtrack.ruzzgd.dev
+        - api-weldtrack.ruzzgd.dev
       secretName: weldtrack-api-tls
 
   rules:
-    - host: api.weldtrack.ruzzgd.dev
+    - host: api-weldtrack.ruzzgd.dev
       http:
         paths:
           - path: /
@@ -76,11 +76,11 @@ spec:
 
   tls:
     - hosts:
-        - cdn.weldtrack.ruzzgd.dev
+        - cdn-weldtrack.ruzzgd.dev
       secretName: weldtrack-cdn-tls
 
   rules:
-    - host: cdn.weldtrack.ruzzgd.dev
+    - host: cdn-weldtrack.ruzzgd.dev
       http:
         paths:
           - path: /
