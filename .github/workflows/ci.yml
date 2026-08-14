@@ -34,6 +34,9 @@ jobs:
           context: ./weldtrackfrontend
           file: ./weldtrackfrontend/Dockerfile
           push: true
+          platforms: linux/amd64
+          provenance: false
+          sbom: false
 
           build-args: |
             VITE_API_BASE_URL=https://api-weldtrack.ruzzgd.dev
@@ -53,7 +56,6 @@ jobs:
           package-name: 'weldtrack/frontend'
           package-type: 'container'
           min-versions-to-keep: 3
-          ignore-versions: '^latest$'
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build-backend:
@@ -80,6 +82,9 @@ jobs:
           context: ./weldtrackbackend
           file: ./weldtrackbackend/Dockerfile
           push: true
+          platforms: linux/amd64
+          provenance: false
+          sbom: false
 
           tags: |
             ghcr.io/${{ github.repository_owner }}/weldtrack/backend:latest
@@ -95,7 +100,6 @@ jobs:
           package-name: 'weldtrack/backend'
           package-type: 'container'
           min-versions-to-keep: 3
-          ignore-versions: '^latest$'
           token: ${{ secrets.GITHUB_TOKEN }}
 
   trigger-deploy:
