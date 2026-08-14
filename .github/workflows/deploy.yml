@@ -140,7 +140,7 @@ jobs:
           kubectl exec \
             -n weldtrack \
             deployment/backend \
-            -- python -m app.bootstrap.create_initial_admin
+            -- python -m app.scripts.create_initial_admin
 
       - name: Wait for frontend rollout
         run: |

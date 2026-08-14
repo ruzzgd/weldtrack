@@ -37,9 +37,6 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-
     nginx.ingress.kubernetes.io/limit-rps: "10"
     nginx.ingress.kubernetes.io/limit-burst-multiplier: "5"
 
@@ -48,15 +45,15 @@ spec:
 
   tls:
     - hosts:
-        - weldtrack.ruzzgd.dev
-      secretName: weldtrack-tls
+        - api.weldtrack.ruzzgd.dev
+      secretName: weldtrack-api-tls
 
   rules:
-    - host: weldtrack.ruzzgd.dev
+    - host: api.weldtrack.ruzzgd.dev
       http:
         paths:
-          - path: /api(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /
+            pathType: Prefix
             backend:
               service:
                 name: backend
@@ -79,11 +76,11 @@ spec:
 
   tls:
     - hosts:
-        - minio.weldtrack.ruzzgd.dev
-      secretName: weldtrack-minio-tls
+        - cdn.weldtrack.ruzzgd.dev
+      secretName: weldtrack-cdn-tls
 
   rules:
-    - host: minio.weldtrack.ruzzgd.dev
+    - host: cdn.weldtrack.ruzzgd.dev
       http:
         paths:
           - path: /
