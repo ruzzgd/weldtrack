@@ -31,27 +31,14 @@ jobs:
           kubectl apply -f k8s/weldtrack/secret.yaml
           kubectl apply -f k8s/weldtrack/configmap.yaml
 
-          echo "Applying persistent storage..."
-          kubectl apply -f k8s/weldtrack/pvc.yaml
+          echo "Removing legacy local infrastructure..."
+          kubectl delete statefulset/postgres deployment/minio \
+            service/postgres service/minio \
+            pvc/postgres-pvc pvc/minio-pvc \
+            -n weldtrack --ignore-not-found=true
 
           echo "Applying services..."
           kubectl apply -f k8s/weldtrack/svc.yaml
-
-          echo "Applying PostgreSQL StatefulSet..."
-          kubectl apply -f k8s/weldtrack/statefulset.yaml
-
-          echo "Waiting for PostgreSQL StatefulSet..."
-          kubectl rollout status statefulset/postgres \
-            -n weldtrack \
-            --timeout=180s
-
-          echo "Waiting for PostgreSQL pod readiness..."
-          kubectl wait \
-            --for=condition=ready \
-            pod \
-            -l app=postgres \
-            -n weldtrack \
-            --timeout=180s
 
           echo "Applying application deployments..."
           kubectl apply -f k8s/weldtrack/deployment.yaml
@@ -69,34 +56,6 @@ jobs:
           kubectl rollout restart deployment/frontend \
             -n weldtrack
 
-          kubectl rollout restart deployment/minio \
-            -n weldtrack
-
-      - name: Wait for MinIO rollout
-        run: |
-          set -e
-
-          if ! kubectl rollout status deployment/minio \
-            -n weldtrack \
-            --timeout=180s; then
-
-            echo "MinIO rollout failed."
-
-            kubectl get pods \
-              -n weldtrack \
-              -l app=minio
-
-            kubectl describe pods \
-              -n weldtrack \
-              -l app=minio
-
-            kubectl logs \
-              -n weldtrack \
-              deployment/minio \
-              --tail=100
-
-            exit 1
-          fi
 
       - name: Wait for backend rollout
         run: |
