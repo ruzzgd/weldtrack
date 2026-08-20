@@ -101,6 +101,20 @@ jobs:
             deployment/backend \
             -- python -m app.scripts.create_initial_admin
 
+      - name: Seed staging users, services, and inventory
+        run: |
+          set -e
+
+          kubectl exec \
+            -n weldtrack \
+            deployment/backend \
+            -- python -m app.scripts.seed_users
+
+          kubectl exec \
+            -n weldtrack \
+            deployment/backend \
+            -- python -m app.scripts.seed_services_and_inventory
+
       - name: Wait for frontend rollout
         run: |
           set -e
