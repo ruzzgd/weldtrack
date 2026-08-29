@@ -13,14 +13,14 @@ data:
   AUTH_COOKIE_SECURE: "true"
   AUTH_COOKIE_SAMESITE: "lax"
 
-  RESEND_FROM_EMAIL: "noreply@ruzzgd.dev"
+  RESEND_FROM_EMAIL: "noreply@weldtrack.shop"
 
-  CORS_ORIGINS: "https://weldtrack.ruzzgd.dev"
+  CORS_ORIGINS: "https://weldtrack.shop,https://www.weldtrack.shop"
 
   ADMIN_EMAIL: "admin@gmail.com"
 
   MINIO_ENDPOINT: "minio.global.svc.cluster.local:9000"
-  MINIO_PUBLIC_URL: "https://cdn-weldtrack.ruzzgd.dev"
+  MINIO_PUBLIC_URL: "https://cdn.weldtrack.shop"
   MINIO_BUCKET: "weldtrack"
   # Cluster-internal MinIO traffic is HTTP; TLS terminates at the public ingress.
   MINIO_SECURE: "false"

@@ -39,8 +39,8 @@ jobs:
           sbom: false
 
           build-args: |
-            VITE_API_BASE_URL=https://api-weldtrack.ruzzgd.dev
-            VITE_CDN_URL=https://cdn-weldtrack.ruzzgd.dev/weldtrack
+            VITE_API_BASE_URL=https://api.weldtrack.shop
+            VITE_CDN_URL=https://cdn.weldtrack.shop/weldtrack
 
           tags: |
             ghcr.io/${{ github.repository_owner }}/weldtrack/frontend:latest

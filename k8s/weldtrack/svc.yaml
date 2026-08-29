@@ -26,3 +26,17 @@ spec:
       port: 80
       targetPort: 80
   type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: weldtrack
+spec:
+  type: ExternalName
+  externalName: minio.global.svc.cluster.local
+  ports:
+    - name: http
+      port: 9000
+      targetPort: 9000

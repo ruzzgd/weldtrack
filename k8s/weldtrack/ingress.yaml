@@ -12,11 +12,22 @@ spec:
 
   tls:
     - hosts:
-        - weldtrack.ruzzgd.dev
+        - weldtrack.shop
+        - www.weldtrack.shop
       secretName: weldtrack-tls
 
   rules:
-    - host: weldtrack.ruzzgd.dev
+    - host: weldtrack.shop
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+    - host: www.weldtrack.shop
       http:
         paths:
           - path: /
@@ -45,11 +56,11 @@ spec:
 
   tls:
     - hosts:
-        - api-weldtrack.ruzzgd.dev
+        - api.weldtrack.shop
       secretName: weldtrack-api-tls
 
   rules:
-    - host: api-weldtrack.ruzzgd.dev
+    - host: api.weldtrack.shop
       http:
         paths:
           - path: /
@@ -59,3 +70,34 @@ spec:
                 name: backend
                 port:
                   number: 8000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: media
+  namespace: weldtrack
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+
+spec:
+  ingressClassName: nginx
+
+  tls:
+    - hosts:
+        - cdn.weldtrack.shop
+      secretName: weldtrack-cdn-tls
+
+  rules:
+    - host: cdn.weldtrack.shop
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  number: 9000
