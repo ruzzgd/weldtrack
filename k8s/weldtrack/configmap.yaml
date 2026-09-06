@@ -13,7 +13,8 @@ data:
   AUTH_COOKIE_SECURE: "true"
   AUTH_COOKIE_SAMESITE: "lax"
 
-  RESEND_FROM_EMAIL: "noreply@weldtrack.shop"
+  BREVO_FROM_EMAIL: "noreply@weldtrack.shop"
+  BREVO_FROM_NAME: "WeldTrack"
 
   CORS_ORIGINS: "https://weldtrack.shop,https://www.weldtrack.shop"
 
