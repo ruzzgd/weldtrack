@@ -18,7 +18,7 @@ data:
 
   CORS_ORIGINS: "https://weldtrack.shop,https://www.weldtrack.shop"
 
-  ADMIN_EMAIL: "admin@gmail.com"
+  ADMIN_EMAIL: "weldtrack@gmail.com"
 
   MINIO_ENDPOINT: "minio.global.svc.cluster.local:9000"
   MINIO_PUBLIC_URL: "https://cdn.weldtrack.shop"
