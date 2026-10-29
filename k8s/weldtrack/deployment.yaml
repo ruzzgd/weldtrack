@@ -19,11 +19,20 @@ spec:
         app: backend
 
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: ghcr-secret
 
       containers:
         - name: backend
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           image: ghcr.io/ruzzgd/weldtrack/backend:latest
           imagePullPolicy: Always
 
@@ -97,11 +106,17 @@ spec:
         app: frontend
 
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: ghcr-secret
 
       containers:
         - name: frontend
+          securityContext:
+            allowPrivilegeEscalation: false
           image: ghcr.io/ruzzgd/weldtrack/frontend:latest
           imagePullPolicy: Always
 
